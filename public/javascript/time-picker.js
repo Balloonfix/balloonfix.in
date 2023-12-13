@@ -104,28 +104,26 @@ timepickerOkButton.addEventListener("click", function () {
   let isAdminPageTimepicker = timepicker.classList.contains("admin-page-time-picker");
   let userSelectedHour = findValueOfHourColumn();
   let userSelectedMinutes = findValueOfMinuteColumn();
-  let userSelectedTime;
+  let userSelectedTime = userSelectedHour + ":" + userSelectedMinutes;
   let userSelectedTimePeriod = findUserSelectedTimePeriod();
 
   if (userSelectedHour !== "00") {
-    userSelectedTime = userSelectedHour + ":" + userSelectedMinutes;
-
     changeElementDisplayProperty(timepicker, "none")
     changeClassnameOfAnElement(timepicker, "visible", "invisible");
   } else {
-    userSelectedTime = userSelectedHour + ":" + userSelectedMinutes;
-  
     animatingElementVisibility("visible", timepickerValidationMessage, "transform", "rotateX(0deg)");
     setTimeout(function() {
       animatingElementVisibility("invisible", timepickerValidationMessage, "transform", "rotateX(90deg)");
     }, 1500);
   }
 
-  if (isProductPageTimepicker) {
-    addContentToTimeFieldChildElements(userSelectedTime, userSelectedTimePeriod);
-  } else if (isAdminPageTimepicker) {
-    changeTimeEditButtonTextContent(userSelectedTime + " " + userSelectedTimePeriod);
-  }  
+  if (/undefined/.test(userSelectedTime) === false) {
+    if (isProductPageTimepicker) {
+      addContentToTimeFieldChildElements(userSelectedTime, userSelectedTimePeriod);
+    } else if (isAdminPageTimepicker) {
+      changeTimeEditButtonTextContent(userSelectedTime + " " + userSelectedTimePeriod);
+    } 
+  } 
 });
 
 
