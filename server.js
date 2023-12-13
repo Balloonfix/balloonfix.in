@@ -224,7 +224,7 @@ server.post("/invoice-page", (req, res) => {
             transporter.sendMail({
               from: "rajtanuchakravarty@gmail.com",
               to: userEmail,
-              subject: "Order Successful",
+              subject: "Order Booking Successful",
               text: "Congratulations, " + username + ".\n\nYou've successfully booked your order!!\nOur team will connect to you shortly for further confirmation on your booking.\nThank you for choosing us.\n\nBest Wishes,\nfrom Balloonfix Team"
             }, (err, info) => {
               if (info) {
@@ -235,7 +235,7 @@ server.post("/invoice-page", (req, res) => {
              from: "rajtanuchakravarty@gmail.com",
              to: "rajtanuchakravarty@gmail.com",
              subject: "New Order booking.",
-             text: "Hello, Admin.\nIt seems like we have a new booking.\nTo know more and manage orders visit the link below:\nhttp://localhost:3000/edit-orders-admin-page"
+             text: "Hello, Admin.\nIt seems like we have a new booking.\nTo know more and manage orders visit the link below:\nhttps://balloonfix.in/edit-orders-admin-page"
            }, (err, info) => {
              if (info) {
                console.log("New Booking email sent to Admin.");

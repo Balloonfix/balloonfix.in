@@ -248,7 +248,6 @@ phoneNumberFieldWrapper.addEventListener("click", function(event) {
 });
 
 bookNowPopupTimeField.addEventListener("click", function () {
-  // animatingElementVisibility("visible", timepicker, "transform", "scale(1)");
   changeElementDisplayProperty(timepicker, "block")
   changeClassnameOfAnElement(timepicker, "invisible", "visible");
 });

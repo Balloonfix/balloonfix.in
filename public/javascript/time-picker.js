@@ -104,13 +104,17 @@ timepickerOkButton.addEventListener("click", function () {
   let isAdminPageTimepicker = timepicker.classList.contains("admin-page-time-picker");
   let userSelectedHour = findValueOfHourColumn();
   let userSelectedMinutes = findValueOfMinuteColumn();
-  let userSelectedTime = userSelectedHour + ":" + userSelectedMinutes;
+  let userSelectedTime;
   let userSelectedTimePeriod = findUserSelectedTimePeriod();
 
   if (userSelectedHour !== "00") {
+    userSelectedTime = userSelectedHour + ":" + userSelectedMinutes;
+
     changeElementDisplayProperty(timepicker, "none")
     changeClassnameOfAnElement(timepicker, "visible", "invisible");
   } else {
+    userSelectedTime = userSelectedHour + ":" + userSelectedMinutes;
+  
     animatingElementVisibility("visible", timepickerValidationMessage, "transform", "rotateX(0deg)");
     setTimeout(function() {
       animatingElementVisibility("invisible", timepickerValidationMessage, "transform", "rotateX(90deg)");
