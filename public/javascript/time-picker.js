@@ -37,6 +37,7 @@ function findValueOfHourColumn() {
 
   arrayOfHourColumnNumbers.forEach((number, index) => {
     let topBorderDistanceOfHourColumnNumberFromViewport = number.getBoundingClientRect().top;
+    console.log(topBorderDistanceOfHourColumnNumberFromViewport, topBorderDistanceOfHourColumnfromViewport)
     if (detailsObject.isUserSelectedValue === false) {
       detailsObject.returnValue = "0" + index;
       console.log(detailsObject.returnValue)
@@ -44,10 +45,10 @@ function findValueOfHourColumn() {
 
     if (topBorderDistanceOfHourColumnfromViewport === topBorderDistanceOfHourColumnNumberFromViewport) {
       detailsObject.isUserSelectedValue = true;
+      console.log("inside lexical", detailsObject);
     };
   });
 
-  console.log("inside lexical", detailsObject);
   // return userSelectedHour;
 };
 
