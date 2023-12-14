@@ -30,19 +30,25 @@ function findValueOfHourColumn() {
   let timePickerHourColumn = document.querySelector(".time-picker__hour-column");
   let topBorderDistanceOfHourColumnfromViewport = timePickerHourColumn.getBoundingClientRect().top;
   let arrayOfHourColumnNumbers = [...timePickerHourColumn.children];
-  let userSelectedHour;
-  let elementIndex;
+  let detailsObject = {
+    returnValue: "",
+    isUserSelectedValue: false
+  }
 
   arrayOfHourColumnNumbers.forEach((number, index) => {
     let topBorderDistanceOfHourColumnNumberFromViewport = number.getBoundingClientRect().top;
+    if (detailsObject.isUserSelectedValue === false) {
+      detailsObject.returnValue = "0" + index;
+      console.log(detailsObject.returnValue)
+    }
 
     if (topBorderDistanceOfHourColumnfromViewport === topBorderDistanceOfHourColumnNumberFromViewport) {
-      userSelectedHour = 0 + index + 1;
+      detailsObject.isUserSelectedValue = true;
     };
   });
 
-  console.log("inside lexical", userSelectedHour, elementIndex)
-  return userSelectedHour;
+  console.log("inside lexical", detailsObject);
+  // return userSelectedHour;
 };
 
 function findValueOfMinuteColumn() {
