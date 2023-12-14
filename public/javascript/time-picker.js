@@ -42,7 +42,7 @@ function findValueOfHourColumn() {
     };
   });
 
-  console.log("inside lexical", userSelectedMinute)
+  console.log("inside lexical", userSelectedHour)
   return userSelectedHour;
 };
 
@@ -62,7 +62,7 @@ function findValueOfMinuteColumn() {
     };
   });
 
-  console.log("inside lexical", userSelectedHour)
+  console.log("inside lexical", userSelectedMinute)
   return userSelectedMinute;
 };
 
