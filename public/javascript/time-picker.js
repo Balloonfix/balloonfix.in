@@ -42,6 +42,7 @@ function findValueOfHourColumn() {
     };
   });
 
+  console.log("inside lexical", userSelectedMinute)
   return userSelectedHour;
 };
 
@@ -61,6 +62,7 @@ function findValueOfMinuteColumn() {
     };
   });
 
+  console.log("inside lexical", userSelectedHour)
   return userSelectedMinute;
 };
 
@@ -98,12 +100,15 @@ timepickerOkButton.addEventListener("click", function () {
   let userSelectedMinute = findValueOfMinuteColumn();
   let userSelectedTimePeriod = findUserSelectedTimePeriod();
 
+  console.log("inside the eventListener", "selected: hr" + userSelectedHour, "selected: min" + userSelectedMinute);
   if (userSelectedHour !== "00") {
+    console.log(userSelectedHour, userSelectedMinute)
     changeElementDisplayProperty(timepicker, "none")
     changeClassnameOfAnElement(timepicker, "visible", "invisible");
     changeElementTextContent(timePeriod, userSelectedTimePeriod);
     changeElementTextContent(timeFieldMinute, userSelectedMinute);
     changeElementTextContent(timeFieldHour, userSelectedHour);
+  console.log("not 00", "selected: hr" + userSelectedHour, "selected: min" + userSelectedMinute);
   } else {
     animatingElementVisibility("visible", timepickerValidationMessage, "transform", "rotateX(0deg)");
     setTimeout(function() {
@@ -114,4 +119,4 @@ timepickerOkButton.addEventListener("click", function () {
 
 
 //exports
-export { timepicker}
+export { timepicker }
