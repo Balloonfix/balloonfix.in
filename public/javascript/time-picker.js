@@ -31,19 +31,17 @@ function findValueOfHourColumn() {
   let topBorderDistanceOfHourColumnfromViewport = timePickerHourColumn.getBoundingClientRect().top;
   let arrayOfHourColumnNumbers = [...timePickerHourColumn.children];
   let userSelectedHour;
+  let elementIndex;
 
-  arrayOfHourColumnNumbers.forEach(number => {
+  arrayOfHourColumnNumbers.forEach((number, index) => {
     let topBorderDistanceOfHourColumnNumberFromViewport = number.getBoundingClientRect().top;
-    let elementContent = number.textContent;
 
     if (topBorderDistanceOfHourColumnfromViewport === topBorderDistanceOfHourColumnNumberFromViewport) {
-      userSelectedHour = elementContent;
-      
-      return;
+      userSelectedHour = 0 + index + 1;
     };
   });
 
-  console.log("inside lexical", userSelectedHour)
+  console.log("inside lexical", userSelectedHour, elementIndex)
   return userSelectedHour;
 };
 
