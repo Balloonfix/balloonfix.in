@@ -34,13 +34,11 @@ function findValueOfHourColumn() {
 
   arrayOfHourColumnNumbers.forEach(number => {
     let topBorderDistanceOfHourColumnNumberFromViewport = number.getBoundingClientRect().top;
-    console.log("number: " + number.textContent)
+    let elementContent = number.textContent;
 
     if (topBorderDistanceOfHourColumnfromViewport === topBorderDistanceOfHourColumnNumberFromViewport) {
-      userSelectedHour = number.textContent;
-
-      console.log("matched", number.TextContent)
-      console.log("under-match", userSelectedHour)
+      userSelectedHour = elementContent;
+      
       return;
     };
   });
