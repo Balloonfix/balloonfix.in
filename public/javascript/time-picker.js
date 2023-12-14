@@ -28,38 +28,31 @@ function findUserSelectedTimePeriod() {
 
 function findValueOfHourColumn() {
   let timePickerHourColumn = document.querySelector(".time-picker__hour-column");
-  let topBorderDistanceOfHourColumnfromViewport = timePickerHourColumn.getBoundingClientRect().top;
+  let topBorderDistanceOfHourColumnfromViewport = Math.trunc(timePickerHourColumn.getBoundingClientRect().top); //removing the decimal part from the value by using Math.trunc();
   let arrayOfHourColumnNumbers = [...timePickerHourColumn.children];
-  let detailsObject = {
-    returnValue: "",
-    isUserSelectedValue: false
-  }
+  let userSelectedHour;
 
-  arrayOfHourColumnNumbers.forEach((number, index) => {
-    let topBorderDistanceOfHourColumnNumberFromViewport = number.getBoundingClientRect().top;
-    console.log(topBorderDistanceOfHourColumnNumberFromViewport, topBorderDistanceOfHourColumnfromViewport)
-    if (detailsObject.isUserSelectedValue === false) {
-      detailsObject.returnValue = "0" + index;
-      console.log(detailsObject.returnValue)
-    }
+  arrayOfHourColumnNumbers.forEach((number) => {
+    let topBorderDistanceOfHourColumnNumberFromViewport = Math.trunc(number.getBoundingClientRect().top);// removing the decimal part from the value by using Math.trunc() method
 
     if (topBorderDistanceOfHourColumnfromViewport === topBorderDistanceOfHourColumnNumberFromViewport) {
-      detailsObject.isUserSelectedValue = true;
-      console.log("inside lexical", detailsObject);
+      userSelectedHour = number.textContent;
+
+      return
     };
   });
 
-  // return userSelectedHour;
+  return userSelectedHour;
 };
 
 function findValueOfMinuteColumn() {
   let timePickerMinuteColumn = document.querySelector(".time-picker__minute-column");
-  let topBorderDistanceOfMinuteColumnfromViewport = timePickerMinuteColumn.getBoundingClientRect().top;
+  let topBorderDistanceOfMinuteColumnfromViewport = Math.trunc(timePickerMinuteColumn.getBoundingClientRect().top);//removing the decimal part from the value by using Math.trunc();
   let arrayOfMinuteColumnNumbers = [...timePickerMinuteColumn.children];
   let userSelectedMinute;
 
   arrayOfMinuteColumnNumbers.forEach(number => {
-    let topBorderDistanceOfMinuteColumnNumberfromViewport = number.getBoundingClientRect().top;
+    let topBorderDistanceOfMinuteColumnNumberfromViewport = Math.trunc(number.getBoundingClientRect().top);//removing the decimal part from the value by using Math.trunc();
 
     if (topBorderDistanceOfMinuteColumnfromViewport === topBorderDistanceOfMinuteColumnNumberfromViewport) {
       userSelectedMinute = number.textContent;
@@ -68,7 +61,6 @@ function findValueOfMinuteColumn() {
     };
   });
 
-  console.log("inside lexical", userSelectedMinute)
   return userSelectedMinute;
 };
 
