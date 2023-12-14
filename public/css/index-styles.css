@@ -1147,6 +1147,7 @@ input {
 }
 
 .time-picker__hour-column, .time-picker__minute-column {
+   position: relative;
    width: 44%;
    height: 54px;
    padding: 0px 0.5rem;

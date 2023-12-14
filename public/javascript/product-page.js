@@ -1,5 +1,5 @@
 import { signingInUser, signingOutUser } from "./firebase_google-signIn.js"
-import { timepicker, findValueOfHourColumn, findValueOfMinuteColumn } from "./time-picker.js";
+import { timepicker } from "./time-picker.js";
 
 let userNavigation = document.querySelector(".user-navigation");
 let userNavigationImage = document.querySelector(".user-navigation__image");
@@ -248,8 +248,6 @@ phoneNumberFieldWrapper.addEventListener("click", function(event) {
 });
 
 bookNowPopupTimeField.addEventListener("click", function () {
-  findValueOfHourColumn();
-  findValueOfMinuteColumn();
   changeElementDisplayProperty(timepicker, "block")
   changeClassnameOfAnElement(timepicker, "invisible", "visible");
 });
