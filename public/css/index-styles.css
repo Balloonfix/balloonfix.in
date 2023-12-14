@@ -119,6 +119,7 @@ input {
 .admin-login-popup-wrapper {
    position: fixed;
    top: 0px;
+   z-index: 1;
    width: 100vw;
    height: 100vh;
    font-family: var(--quicksand-font);
@@ -950,7 +951,7 @@ input {
 
 .book-now-popup {
    position: relative;
-   margin: 30px auto 0px;
+   margin: 4vh auto;
    width: 280px;
    padding: 2rem 0px;
    border: 2px solid var(--golden-color);
@@ -1020,6 +1021,10 @@ input {
    box-sizing: border-box;
 }
 
+.book-now-popup__time-field {
+   padding: 0.25rem 0.5rem 0.25rem 5.5rem;
+}
+
 .book-now-popup__additional-info-field-wrapper {
    width: 238px;
    height: 6rem;
@@ -1041,9 +1046,20 @@ input {
    justify-content: center;
 }
 
-.time-field__time-value {
-   margin-right: 25%;
-   margin-left: 40%;
+.time-field__time-period{
+   margin-left: auto;
+}
+
+.time-field__hour, .time-field__min {
+   width: 20px;
+}
+
+.time-field__hour {
+   margin-right: 0.5rem;
+}
+
+.time-field__min {
+   margin-left: 0.5rem;
 }
 
 .book-now-popup__phone-number-input-field {

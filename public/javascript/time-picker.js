@@ -1,10 +1,4 @@
-import { addContentToTimeFieldChildElements } from "./product-page.js";
-
-
-
 let timepicker = document.querySelector(".time-picker");
-let timepickerHourColumn = document.querySelector(".time-picker__hour-column");
-let timepickerMinuteColumn = document.querySelector(".time-picker__minute-column");
 let timePeriodWrapper = document.querySelector(".time-picker__time-period-wrapper");
 let timePeriodAM = document.querySelector(".time-picker__time-period-am");
 let timePeriodPM = document.querySelector(".time-picker__time-period-pm");
@@ -33,45 +27,63 @@ function findUserSelectedTimePeriod() {
 };
 
 function findValueOfHourColumn() {
-  let distanceOfHourColumnFromWindowViewport = timepickerHourColumn.getBoundingClientRect().top
-  let arrayOfChildElements = [...timepickerHourColumn.children];
-  let textContentToReturn;
-  let distanceOfChildElementFromWindowViewport;
+  let arrayOfHourColumnNumber = [...document.querySelectorAll(".time-picker__hour-column-number")];
+  let IntersectionObserverOptions = {
+    root: document.querySelector(".time-picker__hour-column"),
+    threshold: 1.0
+  };
+  let observer = new IntersectionObserver(observerCallback, IntersectionObserverOptions);
+  let userSelectedHour;
 
-  arrayOfChildElements.every(child => {
-    distanceOfChildElementFromWindowViewport = child.getBoundingClientRect().top;
+  function observerCallback (entryObject) {
+    entryObject.forEach(entry => {
+      let intersectingTarget = entry.target;
+      let timeFieldHour = document.querySelector(".time-field__hour");
 
-    if (distanceOfChildElementFromWindowViewport === distanceOfHourColumnFromWindowViewport) {
-      textContentToReturn = child.textContent;
+      if (entry.isIntersecting) {
+        userSelectedHour = intersectingTarget.textContent;
 
-      return false;
-    } else {
-      return true;
-    }
+        timeFieldHour.textContent = userSelectedHour;        
+      }
+    });
+  };
+  
+  //observing every hour element from the hour column in the time-picker to find the one that the user selects
+  arrayOfHourColumnNumber.forEach(element => {
+    let observerTarget = element;
+
+    observer.observe(observerTarget);
   });
-
-  return textContentToReturn;
 };
 
 function findValueOfMinuteColumn() {
-  let distanceOfMinuteColumnFromWindowViewport = timepickerMinuteColumn.getBoundingClientRect().top;
-  let arrayOfChildElements = [...timepickerMinuteColumn.children];
-  let textContentToReturn;
-  let distanceOfChildElementFromWindowViewport;
+  let arrayOfMinuteColumnNumber = [...document.querySelectorAll(".time-picker__minute-column-number")];
+  let IntersectionObserverOptions = {
+    root: document.querySelector(".time-picker__minute-column"),
+    threshold: 1.0
+  };
+  let observer = new IntersectionObserver(observerCallback, IntersectionObserverOptions);
+  let userSelectedMinute;
 
-  arrayOfChildElements.forEach(child => {
-    distanceOfChildElementFromWindowViewport = child.getBoundingClientRect().top;
+  function observerCallback (entryObject) {
+    entryObject.forEach(entry => {
+      let intersectingTarget = entry.target;
+      let timeFieldMinute = document.querySelector(".time-field__min");
 
-    if (distanceOfChildElementFromWindowViewport === distanceOfMinuteColumnFromWindowViewport) {
-      textContentToReturn = child.textContent;
+      if (entry.isIntersecting) {
+        userSelectedMinute = intersectingTarget.textContent;
 
-      return false;
-    } else {
-      return true;
-    }
+        timeFieldMinute.textContent = userSelectedMinute;   
+      }
+    });
+  };
+
+  //observing every minute element from the minute column in the time-picker to find the one that the user selects
+  arrayOfMinuteColumnNumber.forEach(element => {
+    let observerTarget = element;
+
+    observer.observe(observerTarget);
   });
-
-  return textContentToReturn;
 };
 
 
@@ -100,32 +112,22 @@ timepickerCancelButton.addEventListener("click", function () {
 });
 
 timepickerOkButton.addEventListener("click", function () {
-  let isProductPageTimepicker = timepicker.classList.contains("product-page-time-picker");
-  let isAdminPageTimepicker = timepicker.classList.contains("admin-page-time-picker");
-  let userSelectedHour = findValueOfHourColumn();
-  let userSelectedMinutes = findValueOfMinuteColumn();
-  let userSelectedTime = userSelectedHour + ":" + userSelectedMinutes;
+  let userSelectedHour = document.querySelector(".time-field__hour").textContent;
   let userSelectedTimePeriod = findUserSelectedTimePeriod();
+  let timePeriod = document.querySelector(".time-field__time-period");
 
   if (userSelectedHour !== "00") {
     changeElementDisplayProperty(timepicker, "none")
     changeClassnameOfAnElement(timepicker, "visible", "invisible");
+    timePeriod.textContent = userSelectedTimePeriod;
   } else {
     animatingElementVisibility("visible", timepickerValidationMessage, "transform", "rotateX(0deg)");
     setTimeout(function() {
       animatingElementVisibility("invisible", timepickerValidationMessage, "transform", "rotateX(90deg)");
     }, 1500);
   }
-
-  if (/undefined/.test(userSelectedTime) === false) {
-    if (isProductPageTimepicker) {
-      addContentToTimeFieldChildElements(userSelectedTime, userSelectedTimePeriod);
-    } else if (isAdminPageTimepicker) {
-      changeTimeEditButtonTextContent(userSelectedTime + " " + userSelectedTimePeriod);
-    } 
-  } 
 });
 
 
 //exports
-export { timepicker }
+export { timepicker, findValueOfHourColumn, findValueOfMinuteColumn}
