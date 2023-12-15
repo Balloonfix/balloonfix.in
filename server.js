@@ -269,7 +269,8 @@ server.get("/get-order-details", (req, res) => {
 
 server.post("/update-order", (req, res) => {
   let payload = req.body;
-  let orderId = req.body.orderId
+  let orderId = req.body.orderId;
+  let appEmail = "balloonfixin@gmail.com";
   
   UserBookingModel.findOne({
     orders: {
@@ -288,7 +289,7 @@ server.post("/update-order", (req, res) => {
           updatedOrder = await doc.save()
           .then(success => {
             transporter.sendMail({
-              from: "rajtanuchakravarty@gmail.com",
+              from: appEmail,
               to: payload.clientEmail,
               subject: "Order Confirmed",
               text: "Congratulations, " + payload.clientName + ".\n\nYour booking for " + payload.productName +  " has been confirmed for " + payload.time + " time slot.\nYou could check the order status from 'My Orders' page on the website.\nBalloonfix Team is grateful to be a part of this special celebration.\n\nWe look forward to making this occasion a memorable one for you.\n\nBest Wishes,\nfrom Balloonfix Team"
