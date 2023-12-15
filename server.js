@@ -233,9 +233,9 @@ server.post("/invoice-page", (req, res) => {
             });
            transporter.sendMail({
              from: "balloonfixin@gmail.com",
-             to: appEmail,
+             to: "balloonfixin@gmail.com",
              subject: "New Order booking.",
-             text: "Hello, Admin.\nIt seems like we have a new booking.\nTo know more and manage orders visit the link below:\nhttps://balloonfix.in/edit-orders-admin-page"
+             text: "Hello, Admin.\nIt seems like we have a new booking from " + username + "(" + userEmail + ")." + "\nTo know more and manage orders visit the link below:\nhttps://balloonfix.in/edit-orders-admin-page"
            }, (err, info) => {
              if (info) {
                console.log("New Booking email sent to Admin.");
