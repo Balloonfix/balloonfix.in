@@ -206,7 +206,6 @@ server.post("/invoice-page", (req, res) => {
   let jwtToken = extractJwtFromCookie(req.headers.cookie);
   let userMongoId = verifyJwtToken(jwtToken);
   let payload = req.body;
-  let appEmail;
   let userEmail;
   let username;
   let userImage;
@@ -217,14 +216,13 @@ server.post("/invoice-page", (req, res) => {
         userEmail = doc.email;
         username = doc.username;
         userImage = doc["user-image"];
-        appEmail = "balloonfixin@gmail.com";
 
         doc.orders.push(payload.order);
 
         await doc.save((err, result) => {
           if (result) {
             transporter.sendMail({
-              from: appEmail,
+              from: "balloonfixin@gmail.com",
               to: userEmail,
               subject: "Order Booking Successful",
               text: "Congratulations, " + username + ".\n\nYou've successfully booked your order!!\nOur team will connect to you shortly for further confirmation on your booking.\nThank you for choosing us.\n\nBest Wishes,\nfrom Balloonfix Team"
@@ -234,7 +232,7 @@ server.post("/invoice-page", (req, res) => {
               } 
             });
            transporter.sendMail({
-             from: appEmail,
+             from: "balloonfixin@gmail.com",
              to: appEmail,
              subject: "New Order booking.",
              text: "Hello, Admin.\nIt seems like we have a new booking.\nTo know more and manage orders visit the link below:\nhttps://balloonfix.in/edit-orders-admin-page"

@@ -914,7 +914,7 @@ getOrderDetailsButton.addEventListener("click", function(event) {
 
 googleLoginButton.addEventListener("click",async function(event) {
   let userData = await signingInUser();
-  let adminEmail = "Bikashdebnath365@gmail.com"
+  let adminEmail = "bikashdebnath365@gmail.com"
   let userRegistration;
   let payload = {
     username: "",
