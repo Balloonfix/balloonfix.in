@@ -73,6 +73,6 @@ This fullstack application was created using the ***MERN*** stack.
 - **Email notification** - The admin receives an email notification on every new booking.
   
     
-<h2><u>Website link:</u></h2><br><br>  
+<h2><u>Website link:</u></h2>
   
 [***https://balloonfix.in***](https://balloonfix.in)
