@@ -173,9 +173,10 @@ server.get("/invoice-page", (req, res) => {
         if (String(order._id) === String(orderId)) {
           userData.email = doc.email;
           userData["user-image"] = doc["user-image"];
-          userData.day = order.day;
-          userData.month = order.month;
-          userData.year = order.year;
+          // userData.day = order.day;
+          // userData.month = order.month;
+          // userData.year = order.year;
+          userData["event-date"] = order["event-date"];
           userData.time = order.time;
           userData.eventType = order.eventType;
           userData.productName = order.productName;
@@ -269,6 +270,7 @@ server.get("/get-order-details", (req, res) => {
 server.post("/update-order", (req, res) => {
   let payload = req.body;
   let orderId = req.body.orderId;
+  let eventDate = req.body.eventDate;
   
   UserBookingModel.findOne({
     orders: {
@@ -290,7 +292,7 @@ server.post("/update-order", (req, res) => {
               from: "balloonfixin@gmail.com",
               to: payload.clientEmail,
               subject: "Order Confirmed",
-              text: "Congratulations, " + payload.clientName + ".\n\nYour booking for " + payload.productName +  " has been confirmed for " + payload.time + " time slot.\nYou could check the order status from 'My Orders' page on the website.\nBalloonfix Team is grateful to be a part of this special celebration.\n\nWe look forward to making this occasion a memorable one for you.\n\nBest Wishes,\nfrom Balloonfix Team"
+              text: "Congratulations, " + payload.clientName + ".\n\nYour booking for " + payload.productName +  " has been confirmed for " + payload.time + " time slot on " + eventDate + ".\nYou could check the order status from 'My Orders' page on the website.\nBalloonfix Team is grateful to be a part of this special celebration.\n\nWe look forward to making this occasion a memorable one for you.\n\nBest Wishes,\nfrom Balloonfix Team"
             }, (err, info) => {
               if (info) {
                 console.log("Order confirmation email sent to client.");

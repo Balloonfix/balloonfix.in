@@ -28,6 +28,7 @@ let userBookingSchema = new Schema({
       phoneNumber: { type: String },
       userAddress: { type: String },
       time: { type: String },
+      ["event-date"]: { type: String },
       orderStatus: { type: String },
       additionalInfo: { type: String }
     }]

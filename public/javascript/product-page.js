@@ -17,6 +17,7 @@ let bookNowPopupTimeField = document.querySelector(".book-now-popup__time-field"
 let bookNowPopupCloseButtonWrapper = document.querySelector(".book-now-popup__close-button-wrapper");
 let timeFieldTimeValue = bookNowPopupTimeField.firstElementChild;
 let timeFieldTimePeriodValue = bookNowPopupTimeField.lastElementChild;
+let eventDateInputField = document.querySelector(".book-now-popup__event-date-input-field");
 let userAddressInputField = document.querySelector(".book-now-popup__user-address-input-field");
 let additionalInfoWrapper = document.querySelector(".book-now-popup__additional-info-wrapper");
 let additionalInfoInputField = document.querySelector(".book-now-popup__additional-info-input-field");
@@ -45,6 +46,16 @@ let date = {
 
 
 //custom functions
+function formatDateStringToDDMMYYYY(dateString) {
+  let yyyymmdd = dateString;
+  let day = yyyymmdd.slice(8, 10);
+  let month = yyyymmdd.slice(5,7);
+  let year = yyyymmdd.slice(0, 4);
+  let ddmmyyyy = `${day}-${month}-${year}`;
+
+  return ddmmyyyy;
+}
+
 function addContentToTimeFieldChildElements(...content) {
   let arrayOfChildElementsOfTimeField = [...bookNowPopupTimeField.children];
   let arrayOfContents = content;
@@ -74,15 +85,18 @@ function animatingHeightOfValidationErrorMessage() {
   }, 2000);
 };
 
-function checkTimePhoneNumberAddressValue() {
+function checkTimePhoneNumberEventDateAddressValue() {
   let timeFieldValue = extractTimeFieldContentAsAString();
   let phoneNumberInputFieldValue = phoneNumberInputField.value;
   let userAddressInputFieldValue = userAddressInputField.value;
+  let eventDateInputFieldValue = eventDateInputField.value;
 
   if (timeFieldValue) {
     if (phoneNumberInputFieldValue) {
       if (userAddressInputFieldValue) {
-        return true;
+        if (eventDateInputFieldValue) {
+          return true;
+        }
       }
     }
   } 
@@ -254,8 +268,9 @@ bookNowPopupTimeField.addEventListener("click", function () {
 
 popupBookNowButton.addEventListener("click", function(event) {
   let eventTarget = event.target;
-  let isValid = checkTimePhoneNumberAddressValue();
+  let isValid = checkTimePhoneNumberEventDateAddressValue();
   let bookingData = {};
+  let eventDate = formatDateStringToDDMMYYYY(eventDateInputField.value);
 
   eventType = eventTypeButton.firstChild.textContent;
 
@@ -273,6 +288,7 @@ popupBookNowButton.addEventListener("click", function(event) {
         year: date.year,
         phoneNumber: phoneNumberInputField.value,
         time: timeFieldTimeValue.textContent + " " + timeFieldTimePeriodValue.textContent,
+        ["event-date"]: eventDate,
         userAddress: userAddressInputField.value, 
         orderStatus: "Pending",
         additionalInfo: additionalInfoInputField.value
@@ -284,6 +300,7 @@ popupBookNowButton.addEventListener("click", function(event) {
     setEmptyValueToAnInputElementOrHtmlElement(timeFieldTimeValue);
     setEmptyValueToAnInputElementOrHtmlElement(timeFieldTimePeriodValue);
     setEmptyValueToAnInputElementOrHtmlElement(userAddressInputField);
+    setEmptyValueToAnInputElementOrHtmlElement(eventDateInputField);
     postRequestToServerOnBooking(bookingData);
   } else {
     animatingHeightOfValidationErrorMessage();
@@ -299,7 +316,7 @@ customButton.addEventListener("click", function(event) {
     changeElementBackgroundColor(customButton, "white");
     changeElementTextColor(customButton, "var(--golden-color");
   } else {
-    animatingElementVisibility("visible", additionalInfoWrapper, "height", "12rem");
+    animatingElementVisibility("visible", additionalInfoWrapper, "height", "10rem");
     changeClassnameOfAnElement(customButton, "unselected", "selected")
     changeElementBackgroundColor(customButton, "var(--golden-color");
     changeElementTextColor(customButton, "white");

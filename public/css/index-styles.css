@@ -16,6 +16,10 @@
    display: thin;
 }
 
+::-webkit-calendar-picker-indicator {
+   filter: invert(1);
+}
+
 html {
    scrollbar-width: thin;
 }
@@ -960,7 +964,7 @@ input {
 
 .book-now-popup {
    position: relative;
-   margin: 4vh auto;
+   margin: 10px auto;
    width: 280px;
    padding: 2rem 0px;
    border: 2px solid var(--golden-color);
@@ -993,12 +997,12 @@ input {
    width: 100%;
 }
 
-.book-now-popup__time-wrapper, .book-now-popup__phone-number-wrapper, .book-now-popup__user-address-wrapper {
+.book-now-popup__time-wrapper, .book-now-popup__phone-number-wrapper, .book-now-popup__user-address-wrapper, .book-now-popup__event-date-wrapper {
    display: flex;
    flex-direction: column;
    width: 85%;
    margin: auto;
-   margin-bottom: 1rem;
+   margin-bottom: 0.8rem;
 }
 
 .book-now-popup__additional-info-wrapper {
@@ -1017,11 +1021,11 @@ input {
    position: relative;
 }
 
-.book-now-popup__time-label, .book-now-popup__phone-number-label, .book-now-popup__user-address-label, .book-now-popup__additional-info-label {
+.book-now-popup__time-label, .book-now-popup__event-date-label, .book-now-popup__phone-number-label, .book-now-popup__user-address-label, .book-now-popup__additional-info-label {
    margin: 0px auto 0.5rem;
 }
 
-.book-now-popup__time-field, .book-now-popup__phone-number-field-wrapper, .book-now-popup__user-address-field-wrapper {
+.book-now-popup__time-field, .book-now-popup__event-date-field-wrapper, .book-now-popup__phone-number-field-wrapper, .book-now-popup__user-address-field-wrapper {
    width: 100%;
    height: 2rem;
    padding: 0.25rem 0.5rem;
@@ -1032,6 +1036,10 @@ input {
 
 .book-now-popup__time-field {
    padding: 0.25rem 0.5rem 0.25rem 5.5rem;
+}
+
+.book-now-popup__event-date-input-field {
+   padding-left: 4rem;
 }
 
 .book-now-popup__additional-info-field-wrapper {
@@ -1052,11 +1060,10 @@ input {
 
 .book-now-popup__time-field {
    display: flex;
-   justify-content: center;
 }
 
 .time-field__time-period{
-   margin-left: auto;
+   margin-left: 45px;
 }
 
 .time-field__hour, .time-field__min {
@@ -1088,7 +1095,7 @@ input {
    width: 85%;
    height: 2rem;
    margin: auto;
-   margin-bottom: 1rem;
+   margin-bottom: 0.5rem;
    padding: 0.3rem;
    box-sizing: border-box;
    border-radius: 4px;
@@ -1133,6 +1140,7 @@ input {
    position: absolute;
    left: 0px;
    right: 0px;
+   z-index: 1;
    width: 180px;
    margin: auto;
    padding: 1rem 1.5rem;
@@ -1585,13 +1593,14 @@ input {
 .editable-order__client-address, .confirmed-order__client-address,
 .editable-order__client-product-name, .confirmed-order__client-product-name, 
 .editable-order__client-event-type, .confirmed-order__client-event-type, 
-.editable-order__client-additional-info,  .confirmed-order__client-additional-info {
+.editable-order__client-additional-info,  .confirmed-order__client-additional-info,
+.editable-order__client-event-date,  .confirmed-order__client-event-date {
    margin-bottom: 0.5rem;
    font-size: 16px;
    font-weight: 600;
 }
 
-.client-icon, .fa-box-open, .fa-cake-candles, .fa-location-dot {
+.client-icon, .fa-box-open, .fa-cake-candles, .fa-location-dot, .confirmed-order__calendar-icon, .editable-order__calendar-icon {
    margin-left: 0px;
    margin-right: 6px;
    font-size: 14px;

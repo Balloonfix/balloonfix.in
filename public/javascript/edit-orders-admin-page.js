@@ -331,17 +331,19 @@ async function updateOrder(order) {
     let updateFeedbackSnackbar = editableOrder.querySelector(".update-feedback-snackbar");
     let orderId = editableOrder.querySelector(".order-id").textContent;
     let time = editableOrder.querySelector(".time-edit-button__text-content").textContent;
+    let eventDate = editableOrder.querySelector(".editable-order__client-event-date").lastChild.textContent;
     let orderStatus = editableOrder.querySelector(".drop-down-button").childNodes[0].textContent;
-    let clientName = editableOrder.querySelector(".editable-order__client-name").childNodes[2].textContent;
-    let clientEmail = editableOrder.querySelector(".editable-order__client-email").childNodes[2].textContent;
-    let productName = editableOrder.querySelector(".editable-order__client-product-name").childNodes[1].textContent;
+    let clientName = editableOrder.querySelector(".editable-order__client-name").lastChild.textContent;
+    let clientEmail = editableOrder.querySelector(".editable-order__client-email").lastChild.textContent;
+    let productName = editableOrder.querySelector(".editable-order__client-product-name").lastChild.textContent;
     let payload = {
       orderId,
       orderStatus,
       time,
       clientName, 
       clientEmail, 
-      productName
+      productName,
+      eventDate,
     };
 
     let response = await fetch("/update-order", {
@@ -712,7 +714,7 @@ function ConfirmedOrderWrapper(props) {
 function ConfirmedOrder(props) {
   return (
     <div className="confirmed-order-list__confirmed-order confirmed-order">
-      <div className="confirmed-order__date">
+      <div className="confirmed-order__date">Booked on:&nbsp;
         {`${props.orderData.day} of ${props.orderData.month}, ${props.orderData.year}`}&nbsp;&nbsp;
         <i className="fa-solid fa-calendar-days"></i>
       </div>
@@ -740,6 +742,10 @@ function ConfirmedOrder(props) {
         <div className="confirmed-order__client-event-type">
           <i className="fa-solid fa-cake-candles"></i>&nbsp;
           {props.orderData.eventType}
+        </div>
+        <div className="confirmed-order__client-event-date">
+          <i className="fa-solid fa-calendar-days confirmed-order__calendar-icon"></i>
+          {props.orderData["event-date"]}
         </div>
         <div className="confirmed-order__client-additional-info">
           <i className="fa-solid fa-circle-info"></i>&nbsp;
@@ -819,7 +825,7 @@ function EditableOrder(props) {
   return (
     <div className="editable-order-list__editable-order editable-order" onClick={props.editOrderFunction} >
       <div className="editable-order__update-feedback-snackbar update-feedback-snackbar"></div>
-      <div className="editable-order__date">
+      <div className="editable-order__date">Booked on:&nbsp;
       {`${props.orderData.day} of ${props.orderData.month}, ${props.orderData.year}`}&nbsp;&nbsp;
         <i className="fa-solid fa-calendar-days"></i>
       </div>
@@ -854,6 +860,10 @@ function EditableOrder(props) {
         <div className="editable-order__client-event-type">
           <i className="fa-solid fa-cake-candles"></i>&nbsp;
           {props.orderData.eventType}
+        </div>
+        <div className="editable-order__client-event-date">
+          <i className="fa-solid fa-calendar-days editable-order__calendar-icon"></i>&nbsp;
+          {props.orderData["event-date"]}
         </div>
         <div className="editable-order__client-additional-info">
           <i className="fa-solid fa-circle-info"></i>&nbsp;&nbsp;
