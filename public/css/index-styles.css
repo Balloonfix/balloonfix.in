@@ -1038,8 +1038,13 @@ input {
    padding: 0.25rem 0.5rem 0.25rem 5.5rem;
 }
 
+.book-now-popup__event-date-field-wrapper {
+   display: flex;
+   justify-content: center;
+}
+   
 .book-now-popup__event-date-input-field {
-   padding-left: 4rem;
+   margin-left: 1.5rem;
 }
 
 .book-now-popup__additional-info-field-wrapper {
