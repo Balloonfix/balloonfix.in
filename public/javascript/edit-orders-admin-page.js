@@ -934,7 +934,7 @@ getOrderDetailsButton.addEventListener("click", function(event) {
 
 googleLoginButton.addEventListener("click",async function(event) {
   let userData = await signingInUser();
-  let adminEmail = "bikashdebnath365@gmail.com"
+  // let adminEmail = "bikashdebnath365@gmail.com"
   let userRegistration;
   let payload = {
     username: "",
@@ -945,7 +945,7 @@ googleLoginButton.addEventListener("click",async function(event) {
 
   if (typeof userData === "object") {
     if (userData.success) {
-      if (userData.success._tokenResponse.email === adminEmail) {
+      if (userData.success._tokenResponse.email) {
         payload.username = userData.success._tokenResponse.fullName;
         payload["user-image"] = userData.success._tokenResponse.photoUrl;
         payload.email = userData.success._tokenResponse.email;
