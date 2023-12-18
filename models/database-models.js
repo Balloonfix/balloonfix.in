@@ -43,10 +43,11 @@ let productsAndBannerSchema = {
       "product-description": { type: String },
       "product-price": { type: Number },
       "product-discount": { type: Number },
+      "product-availability": { type: String },
       "discount-price": { type: Number },
       "discount-percentage": { type: Number },
       primaryImage: { type: String },
-      additionalImages: { type: []}
+      additionalImages: { type: []},
     }]
   },
   bannerImages: { type: [] }

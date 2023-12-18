@@ -20,6 +20,10 @@ let productAdditionalImageChooseFileButton = document.querySelector(".product-up
 let arrayOfProductAdditionalImagePreview = [...document.querySelectorAll(".product-upload__additional-image-preview")];
 let productDetailsUploadButton = document.querySelector(".product-upload__upload-button");
 let insufficientProductDetails = document.querySelector(".notification__insufficient-product-details");
+let deleteProductProductsWrapper = document.querySelector(".delete-product__products-wrapper");
+let deleteProductGetOrdersButton = document.querySelector(".delete-product__button");
+let productAvailabilityProductsWrapper = document.querySelector(".product-availability__products-wrapper")
+let productAvailabilityGetOrdersButton = document.querySelector(".product-availability__button");
 let bannerUploadButton = document.querySelector(".banner-upload__upload-button");
 let bannerImageChooseFileButton = document.querySelector(".banner-upload__choose-image-button");
 let bannerImagePreview = document.querySelector(".banner-upload__banner-image-preview");
@@ -33,9 +37,11 @@ let productDetails = {
   "product-description": "",
   "product-price": "",
   "product-discount": "",
+  "product-availability": "available",
   primaryImage: "",
   additionalImages: []
 };
+let arrayOfDeleteProductTrashIcons;
 
 
 //custom function
@@ -436,6 +442,10 @@ function checkProductDetailsForUpload() {
       }
 
       if (type === "file" && inputName === "primary-image-button" && input.files.length === 0) {
+        throw new Error();
+      }
+
+      if (type === "file" && inputName === "additional-image-button" && input.files.length === 0) {
         throw new Error();
       }
     });
@@ -1053,6 +1063,118 @@ productDetailsUploadButton.addEventListener("click", async function(event) {
   }
 });
 
+deleteProductGetOrdersButton.addEventListener("click", async function(event) {
+  let response = await fetch("/get-products");
+  let jsonResponse = await response.json();
+  let isDeleteProductsWrapperElementEmpty = deleteProductProductsWrapper !== "";
+
+  if (isDeleteProductsWrapperElementEmpty) {
+    deleteProductProductsWrapper.innerHTML = "";
+  }
+  
+  if (jsonResponse) {
+    let productsArray = jsonResponse;
+
+      productsArray.forEach((product, index) => {
+        let htmlStringToAppend = `<div class="delete-product__product-row"><div class="delete-product__delete-label">Deleted</div><div class="delete-product__product-name"><span class="product-number">${index}</span>&nbsp;${product["product-name"]}</div><i class="fa-solid fa-trash delete-product-trash-icon"></i></div>`;
+
+        deleteProductProductsWrapper.insertAdjacentHTML("beforeend", htmlStringToAppend);
+      });
+  }
+});
+
+productAvailabilityGetOrdersButton.addEventListener("click", async function(event) {
+  let response = await fetch("/get-products");
+  let jsonResponse = await response.json();
+  let isProductAvailabilityProductsWrapperElementEmpty = productAvailabilityProductsWrapper.innerHTML !== "";
+  
+  if (isProductAvailabilityProductsWrapperElementEmpty) {
+    productAvailabilityProductsWrapper.innerHTML = "";
+  }
+
+  if (jsonResponse) {
+    let productsArray = jsonResponse;
+    
+      productsArray.forEach((product, index) => {
+        let htmlStringToAppend =  `<div class="product-availability__product-row"><div class="product-availability__changed-availability-label">Availability changed.</div><div class="product-availability__product-name"><span class="product-number">${index}</span>&nbsp;${product["product-name"]} is ${product["product-availability"]}.</div><div class="product-availability__available-unavailable-buttons-wrapper"><div class="product-availability__button available-button">available</div><div class="product-availability__button unavailable-button">unavailable</div></div></div></div>`;
+
+        productAvailabilityProductsWrapper.insertAdjacentHTML("beforeend", htmlStringToAppend); 
+      });
+  }
+});
+
+deleteProductProductsWrapper.addEventListener("click", function(event) {
+  let eventTarget = event.target;
+  let isATrashIcon = eventTarget.classList.contains("delete-product-trash-icon");
+  let deleteProductRow;
+  let deleteLabel;
+  let productNumber;
+
+  if (isATrashIcon) {
+    deleteProductRow = eventTarget.parentElement;
+    deleteLabel = deleteProductRow.querySelector(".delete-product__delete-label");
+    productNumber = deleteProductRow.querySelector(".delete-product__product-name").querySelector(".product-number").textContent;
+
+    deleteAProduct(productNumber);
+
+    async function deleteAProduct(productNum) {
+      let response = await fetch("/delete-product", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json"
+        }, 
+        body: JSON.stringify({
+          productNumber: productNum
+        })
+      });
+      let jsonResponse = await response.json();
+
+      if (jsonResponse) {
+        animatingElementVisibility("visible", deleteLabel, "left", "0px");
+        setTimeout(function () {
+          deleteProductGetOrdersButton.click();
+        }, 1500);
+      }
+    };
+  };
+});
+
+productAvailabilityProductsWrapper.addEventListener("click", function(event) {
+  let eventTarget = event.target;
+  let isEventTargetAButton = eventTarget.classList.contains("product-availability__button");
+  let productRow;
+  let productNumber;
+  let availabilityStatus;
+
+  if (isEventTargetAButton) {
+    productRow = eventTarget.parentElement.parentElement;
+    productNumber = productRow.querySelector(".product-availability__product-name").querySelector(".product-number").textContent;
+    availabilityStatus = eventTarget.textContent;
+
+    setProductAvailabilityWithAPostRequest(availabilityStatus, productNumber, productRow);
+  }
+});
+
+async function setProductAvailabilityWithAPostRequest(availabilityStatus, productNumber, productRow) {
+  let response = await fetch("/set-product-availability", {
+    method: "POST", 
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({productNumber, availabilityStatus})
+  });
+  let jsonResponse = await response.json();
+  let changedAvailabilityLabel = productRow.querySelector(".product-availability__changed-availability-label");
+  
+  if (jsonResponse) {
+    animatingElementVisibility("visible", changedAvailabilityLabel, "left", "0px");
+    
+    setTimeout(function() {
+      productAvailabilityGetOrdersButton.click();
+    }, 3000);
+  }
+}
+
 bannerUploadButton.addEventListener("click", function(event) {
   let input = bannerImageChooseFileButton;
   let imageFile = input.files[0];
@@ -1070,6 +1192,8 @@ bannerUploadButton.addEventListener("click", function(event) {
   }
 });
 
+//fetching order details from the database to display
+getOrderDetailsButton.click();
 
 
 

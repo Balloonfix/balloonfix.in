@@ -94,6 +94,18 @@ server.get("/product-page", checkUserLoggedIn, getUserSelectedProduct, (req, res
   } 
 });
 
+server.get("/get-products", (req, res) => {
+  ProductsAndBannerModel.find({}, async (err, doc) => {
+    let arrayOfProducts;
+    
+    if (doc[0].products) {
+      arrayOfProducts = doc[0].products;
+
+      res.json(arrayOfProducts);
+    }
+  });
+});
+
 server.post("/upload-product", (req, res) => {
   let payload = req.body;
   let newProduct;
@@ -118,6 +130,58 @@ server.post("/upload-product", (req, res) => {
           res.json(newProduct);
         } else {
           res.json({error: "Couldn't upload the new banner image."})
+        }
+      });
+    }
+  });
+});
+
+server.post("/delete-product", (req, res) => {
+  let indexOfProductToDelete = Number(req.body.productNumber);
+
+  ProductsAndBannerModel.find({}, async (err, doc) => {
+    let arrayOfProducts = doc[0].products;
+
+    if (arrayOfProducts) {
+       let newArrayOfProductsToSave = arrayOfProducts.filter((product, indexOfProduct) => {
+         return indexOfProduct !== indexOfProductToDelete;
+       });
+       
+       doc[0].products = newArrayOfProductsToSave;
+       await  doc[0].save((err, doc) => {
+
+        if (doc) {
+          res.json({deleteStatus: "Successfully deleted."});
+        } else {
+          res.json({error: "Couldn't upload the new banner image."})
+        }
+      });
+    }
+  });
+});
+
+server.post("/set-product-availability", (req, res) => {
+  let productNumber = Number(req.body.productNumber);
+  let availabilityStatusToSet = req.body.availabilityStatus;
+
+  ProductsAndBannerModel.find({}, (err, doc) => {
+    let arrayOfProducts;
+
+    if (doc) {
+      arrayOfProducts = doc[0].products;
+
+      arrayOfProducts.forEach(async (productObject, index) => {
+        
+        if (productNumber === index) {
+          doc[0].products[productNumber]["product-availability"] = availabilityStatusToSet;
+
+          await doc[0].save((err, doc) => {
+            if (doc) {
+              res.json({availabilityStatus: "successful"});
+            } else {
+              res.json({availabilityStatus: "unsuccessful"});
+            }
+          });
         }
       });
     }
@@ -173,9 +237,6 @@ server.get("/invoice-page", (req, res) => {
         if (String(order._id) === String(orderId)) {
           userData.email = doc.email;
           userData["user-image"] = doc["user-image"];
-          // userData.day = order.day;
-          // userData.month = order.month;
-          // userData.year = order.year;
           userData["event-date"] = order["event-date"];
           userData.time = order.time;
           userData.eventType = order.eventType;

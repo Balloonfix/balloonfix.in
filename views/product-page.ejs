@@ -84,6 +84,11 @@
             <span class="product-discount-percentage" style="display: none;">0% off</span>
           <% } %>
         </div>
+        <% if (selectedProductDetails["product-availability"] === "unavailable") { %>
+        <div class="about-product-container__product-availability-status">
+          Currently unavailable.
+        </div>
+        <% } else { %> 
         <div class="about-product-container-buttons">
           <div class="about-product-container__button event-type-button">
             Event Type
@@ -103,6 +108,7 @@
             <i class="fa-solid fa-hand-point-up"></i>
           </div>
         </div>
+        <% } %>
       </div>
     </div>
     <div class="sign-up-popup-wrapper invisible">
@@ -141,7 +147,7 @@
           </div>
           <div class="book-now-popup__time-picker product-page-time-picker time-picker invisible">
             <div class="time-picker-label">
-              Enter time 
+              Scroll to select time
             </div>
             <div class="time-picker__time-input-field-wrapper">
               <div class="time-picker__hour-column">

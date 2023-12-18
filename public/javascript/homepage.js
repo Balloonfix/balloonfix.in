@@ -89,7 +89,7 @@ function automateScrollingOfBannerImagesWithThreeSecondInterval() {
       }
     });
   }
-  setInterval(setNextBannerImageWithinBannerViewport, 3000);
+  setInterval(setNextBannerImageWithinBannerViewport, 8000);
 };
 
 function scrollBannerImageUsingIndicator(indexOfIndicator) {
