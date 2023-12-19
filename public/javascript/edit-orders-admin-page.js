@@ -27,6 +27,9 @@ let productAvailabilityGetOrdersButton = document.querySelector(".product-availa
 let bannerUploadButton = document.querySelector(".banner-upload__upload-button");
 let bannerImageChooseFileButton = document.querySelector(".banner-upload__choose-image-button");
 let bannerImagePreview = document.querySelector(".banner-upload__banner-image-preview");
+let deleteBannerButton = document.querySelector(".delete-banner__button");
+let deleteBannerUpdateNotification = document.querySelector(".delete-banner__update-notification");
+let totalBannerImageNumber = document.querySelector(".delete-banner__total-banner-image-number");
 let uploadNotification = document.querySelector(".upload-notification");
 let uploadNotificationSuccessful = document.querySelector(".upload-notification__successful");
 let uploadNotificationFailed = document.querySelector(".upload-notification__failed")
@@ -554,6 +557,38 @@ async function uploadBannerImageURLToServer(imageURL) {
   }
 };
 
+function setBase64PrimaryImageOnProductDetailsObject(image) {
+  //converting an image file to base64 string and adding the string to the primaryImage property of productDetails object.
+  let imageFile = image;
+  let reader = new FileReader();
+  let base64Representation;
+  
+  reader.addEventListener("load", function(event) {
+    base64Representation = reader.result.replace("data:", "").replace(/^.+,/,"");
+    productDetails.primaryImage = base64Representation;
+  });
+
+  reader.readAsDataURL(imageFile);
+};
+
+function setBase64AdditionalImagesOnProductDetailsObject(image) {
+  //converting an image file to base64 string and adding the string to the additionalImages array of productDetails object.
+  let imageFile = image;
+  let reader = new FileReader();
+  let base64Representation;
+
+  reader.readAsDataURL(imageFile);
+
+  reader.addEventListener("load", function(event) {
+    let lengthOfArrayOfAdditionalImages = productDetails.additionalImages.length;
+    base64Representation = reader.result.replace("data:", "").replace(/^.+,/, "");
+    
+    if (lengthOfArrayOfAdditionalImages <= 3) {
+      productDetails.additionalImages.push(base64Representation);
+    } 
+  });
+}
+
 function uploadBase64BannerImgStringToFirebaseCloudStorage(base64File) {
   let uniqueKey = "123" + Date.now();
   let firebaseStorageInstance = getStorage();
@@ -573,7 +608,7 @@ function uploadBase64StringOfProductAdditionalImagesToFirebaseCloudStorage() {
   let arrayOfBase64StringsOfAdditionalImages = productDetails.additionalImages;
   let firebaseStorageInstance = getStorage();
   let productName = productDetails["product-name"];
-  let numberToMatch = arrayOfBase64StringsOfAdditionalImages.length-1;
+  let numberToMatch = arrayOfBase64StringsOfAdditionalImages.length-1;//excluding the first base64 string in the "additionalImages" array
   let numberOfImageURLsReceivedFromFirebaseCloudStorage = 0;
   
   arrayOfBase64StringsOfAdditionalImages.forEach((base64, index) => {
@@ -624,38 +659,6 @@ function uploadBase64StringOfProductPrimaryImageToFirebaseCloudStorage() {
   }
 };
 
-function setBase64PrimaryImageOnProductDetailsObject(image) {
-  //converting an image file to base64 string and adding the string to the primaryImage property of productDetails object.
-  let imageFile = image;
-  let reader = new FileReader();
-  let base64Representation;
-  
-  reader.addEventListener("load", function(event) {
-    base64Representation = reader.result.replace("data:", "").replace(/^.+,/,"");
-    productDetails.primaryImage = base64Representation;
-  });
-
-  reader.readAsDataURL(imageFile);
-};
-
-function setBase64AdditionalImagesOnProductDetailsObject(image) {
-  //converting an image file to base64 string and adding the string to the additionalImages array of productDetails object.
-  let imageFile = image;
-  let reader = new FileReader();
-  let base64Representation;
-
-  reader.readAsDataURL(imageFile);
-
-  reader.addEventListener("load", function(event) {
-    let lengthOfArrayOfAdditionalImages = productDetails.additionalImages.length;
-    base64Representation = reader.result.replace("data:", "").replace(/^.+,/, "");
-    
-    if (lengthOfArrayOfAdditionalImages <= 3) {
-      productDetails.additionalImages.push(base64Representation);
-    } 
-  });
-}
-
 function setProductInfoOnProductDetailsObject() {
   let productDetailsElement = document.querySelector(".product-upload__product-details");
   let inputElements = [...productDetailsElement.querySelectorAll("input")];
@@ -675,6 +678,75 @@ function setProductInfoOnProductDetailsObject() {
 
   return productDetails;
 }
+
+async function setProductAvailabilityWithAPostRequest(availabilityStatus, productNumber, productRow) {
+  let response = await fetch("/set-product-availability", {
+    method: "POST", 
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({productNumber, availabilityStatus})
+  });
+  let jsonResponse = await response.json();
+  let changedAvailabilityLabel = productRow.querySelector(".product-availability__changed-availability-label");
+  
+  if (jsonResponse) {
+    animatingElementVisibility("visible", changedAvailabilityLabel, "left", "0px");
+    
+    setTimeout(function() {
+      productAvailabilityGetOrdersButton.click();
+    }, 3000);
+  }
+};
+
+async function getTotalNumberOfBannerImages() {
+  let response = await fetch("/get-total-banner");
+  let jsonResponse = await response.json(); 
+
+  if (jsonResponse) {
+    totalBannerImageNumber.textContent = `Total banner images: ${jsonResponse.totalBannerImages}`;
+  }
+};
+
+async function deleteABannerImage(bannerImageNumber) {
+  let enterBannerNumberInputField = document.querySelector(".delete-banner__enter-banner-number-input-field");
+  let totalBannerImagesAvailable = Number(totalBannerImageNumber.textContent.match(/\d+/).join(""));
+  let imageNumber;
+
+  if (bannerImageNumber >= 1 && bannerImageNumber <= totalBannerImagesAvailable) {
+    imageNumber = bannerImageNumber - 1;
+
+    console.log(imageNumber)
+    let response = await fetch("/delete-banner", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ imageNumber: imageNumber })
+    });
+    let jsonResponse = await response.json(); 
+
+    if (jsonResponse) {
+      console.log(jsonResponse)
+      changeElementTextContent(deleteBannerUpdateNotification, "Deleted successfully.")
+      animatingElementVisibility("visible", deleteBannerUpdateNotification, "bottom", "0px");
+      setEmptyValueToAnInputElementOrHtmlElement(enterBannerNumberInputField);
+
+      setTimeout(function() {
+        animatingElementVisibility("invisible", deleteBannerUpdateNotification, "bottom", "-200px");
+        getTotalNumberOfBannerImages();
+      }, 1500);
+    }
+  } else {
+    changeElementTextContent(deleteBannerUpdateNotification, "Select a valid number.");
+    changeElementBackgroundColor(deleteBannerUpdateNotification, "var(--red-color)");
+    animatingElementVisibility("visible", deleteBannerUpdateNotification, "bottom", "0px");
+
+    setTimeout(function() {
+      animatingElementVisibility("invisible", deleteBannerUpdateNotification, "bottom", "-200px");
+    }, 1500);
+  }
+};
 
 
 //functional react components
@@ -1024,15 +1096,24 @@ productAdditionalImageChooseFileButton.addEventListener("change", function(event
 
   //removing any existing image data from "additionalImages" property of "productDetails" object
   if (productDetails.additionalImages.length) {
-    console.log(productDetails.additionalImages);
     productDetails.additionalImages = [];
   }
 
-  if (numberOfAdditionalImagesSelectedByUser) {
-    displayImageSelectedByAnUser(imagePreviewElements, arrayOfImageFiles);
-    arrayOfImageFiles.forEach((image, index) => {      
-      setBase64AdditionalImagesOnProductDetailsObject(image);
-    });
+  if (numberOfAdditionalImagesSelectedByUser) { 
+
+    if (arrayOfImageFiles.length > 3) {
+      arrayOfImageFiles.length = 3//reducing the length of arrayOfImageFiles to 3
+
+      displayImageSelectedByAnUser(imagePreviewElements, arrayOfImageFiles);
+      arrayOfImageFiles.forEach((image, index) => {      
+        setBase64AdditionalImagesOnProductDetailsObject(image);
+      });
+    } else {
+      displayImageSelectedByAnUser(imagePreviewElements, arrayOfImageFiles);
+      arrayOfImageFiles.forEach((image, index) => {      
+        setBase64AdditionalImagesOnProductDetailsObject(image);
+      });
+    }
   }
 });
 
@@ -1066,9 +1147,9 @@ productDetailsUploadButton.addEventListener("click", async function(event) {
 deleteProductGetOrdersButton.addEventListener("click", async function(event) {
   let response = await fetch("/get-products");
   let jsonResponse = await response.json();
-  let isDeleteProductsWrapperElementEmpty = deleteProductProductsWrapper !== "";
+  let deleteProductsWrapperIsNotEmpty = deleteProductProductsWrapper !== "";
 
-  if (isDeleteProductsWrapperElementEmpty) {
+  if (deleteProductsWrapperIsNotEmpty) {
     deleteProductProductsWrapper.innerHTML = "";
   }
   
@@ -1076,7 +1157,7 @@ deleteProductGetOrdersButton.addEventListener("click", async function(event) {
     let productsArray = jsonResponse;
 
       productsArray.forEach((product, index) => {
-        let htmlStringToAppend = `<div class="delete-product__product-row"><div class="delete-product__delete-label">Deleted</div><div class="delete-product__product-name"><span class="product-number">${index}</span>&nbsp;${product["product-name"]}</div><i class="fa-solid fa-trash delete-product-trash-icon"></i></div>`;
+        let htmlStringToAppend = `<div class="delete-product__product-row"><div class="delete-product__delete-label">Deleted</div><div class="delete-product__product-name"><span class="product-number">${index}</span>${product["product-name"]}</div><i class="fa-solid fa-trash delete-product-trash-icon"></i></div>`;
 
         deleteProductProductsWrapper.insertAdjacentHTML("beforeend", htmlStringToAppend);
       });
@@ -1096,7 +1177,7 @@ productAvailabilityGetOrdersButton.addEventListener("click", async function(even
     let productsArray = jsonResponse;
     
       productsArray.forEach((product, index) => {
-        let htmlStringToAppend =  `<div class="product-availability__product-row"><div class="product-availability__changed-availability-label">Availability changed.</div><div class="product-availability__product-name"><span class="product-number">${index}</span>&nbsp;${product["product-name"]} is ${product["product-availability"]}.</div><div class="product-availability__available-unavailable-buttons-wrapper"><div class="product-availability__button available-button">available</div><div class="product-availability__button unavailable-button">unavailable</div></div></div></div>`;
+        let htmlStringToAppend =  `<div class="product-availability__product-row"><div class="product-availability__changed-availability-label">Availability changed.</div><div class="product-availability__product-name"><span class="product-number">${index}</span>${product["product-name"]} is ${product["product-availability"]}.</div><div class="product-availability__available-unavailable-buttons-wrapper"><div class="product-availability__button available-button">available</div><div class="product-availability__button unavailable-button">unavailable</div></div></div></div>`;
 
         productAvailabilityProductsWrapper.insertAdjacentHTML("beforeend", htmlStringToAppend); 
       });
@@ -1139,6 +1220,7 @@ deleteProductProductsWrapper.addEventListener("click", function(event) {
   };
 });
 
+
 productAvailabilityProductsWrapper.addEventListener("click", function(event) {
   let eventTarget = event.target;
   let isEventTargetAButton = eventTarget.classList.contains("product-availability__button");
@@ -1155,25 +1237,7 @@ productAvailabilityProductsWrapper.addEventListener("click", function(event) {
   }
 });
 
-async function setProductAvailabilityWithAPostRequest(availabilityStatus, productNumber, productRow) {
-  let response = await fetch("/set-product-availability", {
-    method: "POST", 
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({productNumber, availabilityStatus})
-  });
-  let jsonResponse = await response.json();
-  let changedAvailabilityLabel = productRow.querySelector(".product-availability__changed-availability-label");
-  
-  if (jsonResponse) {
-    animatingElementVisibility("visible", changedAvailabilityLabel, "left", "0px");
-    
-    setTimeout(function() {
-      productAvailabilityGetOrdersButton.click();
-    }, 3000);
-  }
-}
+
 
 bannerUploadButton.addEventListener("click", function(event) {
   let input = bannerImageChooseFileButton;
@@ -1192,8 +1256,20 @@ bannerUploadButton.addEventListener("click", function(event) {
   }
 });
 
+deleteBannerButton.addEventListener("click", function(event) {
+  let eventTarget = event.target;
+  let isDeleteBannerButton = event.target.classList.contains("delete-banner__button");
+  let enterBannerNumberInputField = document.querySelector(".delete-banner__enter-banner-number-input-field");
+  let isABannerNumber = Number(enterBannerNumberInputField.value);
+
+  if (isDeleteBannerButton) {
+    deleteABannerImage(isABannerNumber);
+  }
+});
+
+
 //fetching order details from the database to display
 getOrderDetailsButton.click();
-
+getTotalNumberOfBannerImages();
 
 

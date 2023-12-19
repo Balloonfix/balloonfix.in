@@ -205,7 +205,7 @@ server.post("/upload-banner-image", (req, res) => {
     } else {
       newBannerImage = req.body.bannerImages[0];
 
-      doc[0].bannerImages.push(newBannerImage);
+      doc[0].bannerImages.unshift(newBannerImage);
       await  doc[0].save((err, doc) => {
         if (doc) {
           res.json({bannerImages: doc.bannerImages});
@@ -213,6 +213,41 @@ server.post("/upload-banner-image", (req, res) => {
           res.json({error: "Couldn't upload the new banner image."})
         }
       });
+    }
+  });
+});
+
+server.post("/delete-banner", (req, res) => {
+  let imageNumber = req.body.imageNumber;
+  
+  ProductsAndBannerModel.find({},async (err, doc) => {
+    if (doc) {
+      let arrayOfBannerImages = doc[0].bannerImages;
+      let newArrayOfBannerImages = arrayOfBannerImages.filter((bannerImage, index) => {
+        return imageNumber !== index;
+      });
+        
+      doc[0].bannerImages = newArrayOfBannerImages;
+      await doc[0].save((err, doc) => {
+  
+        if (doc) {
+          let updateNumberOfBannerImages = doc.bannerImages.length;
+          res.json({numberOfBannerImages: updateNumberOfBannerImages});
+        }
+      });
+    } 
+  });
+});
+
+server.get("/get-total-banner", (req, res) => {
+  let totalOfBannerImages;
+
+  ProductsAndBannerModel.find({}, (err, doc) => {
+    if (doc[0].bannerImages) {
+      totalOfBannerImages = doc[0].bannerImages.length;
+      res.json({totalBannerImages: totalOfBannerImages});
+    } else {
+      res.json({totalBannerImages: "No Banner Image"});
     }
   });
 });
@@ -353,7 +388,7 @@ server.post("/update-order", (req, res) => {
               from: "balloonfixin@gmail.com",
               to: payload.clientEmail,
               subject: "Order Confirmed",
-              text: "Congratulations, " + payload.clientName + ".\n\nYour booking for " + payload.productName +  " has been confirmed with " + payload.time + " time slot for " + eventDate + ".\nYou could check the order status from 'My Orders' page on the website.\nBalloonfix Team is grateful to be a part of this special celebration.\n\nWe look forward to making this occasion a memorable one for you.\n\nBest Wishes,\nfrom Balloonfix Team"
+              text: "Congratulations, " + payload.clientName + ".\n\nYour booking for " + payload.productName +  " has been confirmed with " + payload.time.trim() + " time slot for " + eventDate + ".\nYou could check the order status from 'My Orders' page on the website.\nBalloonfix Team is grateful to be a part of this special celebration.\n\nWe look forward to making this occasion a memorable one for you.\n\nBest Wishes,\nfrom Balloonfix Team"
             }, (err, info) => {
               if (info) {
                 console.log("Order confirmation email sent to client.");
