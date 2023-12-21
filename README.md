@@ -70,6 +70,12 @@ This fullstack application was created using the ***MERN*** stack.
 
 - **Upload product & banner images** - Both product and banner images can be uploaded by the admin.
 
+- **Delete product & banner images** - Both product and banner images can be deleted by the admin.
+
+- **Change product availability** - Admin can change the availability of the products.  
+
+- **Delete product** - Products can be deleted by the admin.
+
 - **Email notification** - The admin receives an email notification on every new booking.
   
     
